@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>MewMate — Cat Safety Tags</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --color-forest-900:#0F2F20;--color-forest-800:#173D2A;--color-forest-700:#1F4D34;--color-forest-600:#2B6546;--color-forest-500:#3A7A58;
+  --color-gold-700:#A77F16;--color-gold-600:#C99B24;--color-gold-500:#D4AF37;--color-gold-400:#E3C65F;--color-gold-300:#F1D989;
+  --color-hazel-peach:#F4DBB8;--color-cream:#FFF7EB;--color-beige:#F2E3C6;--color-taupe:#CBBFA7;--color-charcoal:#2B2B2B;
+  --color-terracotta:#E07A3F;--color-sage:#A8B99A;--color-blush:#F4C1C7;--color-mint:#BFE3D6;
+  --bg-page:#F4DBB8;--bg-soft:#F2E3C6;--bg-card:#FFF7EB;--bg-elevated:#FFFFFF;
+  --text-primary:#2B2B2B;--text-secondary:#6B6255;--text-muted:#8A7D6B;--text-inverse:#FFF7EB;
+  --brand:#1F4D34;--brand-hover:#173D2A;--brand-active:#0F2F20;
+  --accent:#D4AF37;--accent-hover:#C99B24;
+  --border-soft:#E6D6BC;--border-strong:#CBBFA7;
+  --success:#3A7A58;--success-soft:#BFE3D6;--warning-soft:#F7E6A7;--warning-text:#73580F;
+  --danger:#E07A3F;--danger-hover:#C9632D;--danger-soft:#F8D2BE;--danger-text:#8F3E20;
+  --status-safe-bg:#BFE3D6;--status-safe-text:#1F4D34;
+  --font-display:"Fredoka",Georgia,serif;--font-body:"Nunito Sans",Arial,sans-serif;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;--r-2xl:32px;--r-pill:999px;
+  --sh-xs:0 1px 2px rgba(43,43,43,.06);--sh-sm:0 4px 10px rgba(43,43,43,.08);--sh-md:0 10px 24px rgba(43,43,43,.10);--sh-lg:0 18px 40px rgba(43,43,43,.14);
+  --sh-warm-sm:0 6px 16px rgba(129,89,38,.10);--sh-warm-md:0 14px 32px rgba(129,89,38,.14);
+  --dur:180ms;--ease:cubic-bezier(0.2,0,0,1);--ease-soft:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--font-body);color:var(--text-primary);background:var(--color-forest-900);display:flex;justify-content:center;overscroll-behavior:none}
+#app{width:100%;max-width:430px;min-height:100vh;background:var(--bg-page);position:relative;display:flex;flex-direction:column;overflow:hidden}
+.topbar{position:sticky;top:0;z-index:200;background:var(--bg-page);display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border-soft)}
+.topbar .back{background:none;border:0;font-size:26px;color:var(--brand);cursor:pointer;width:34px;height:34px;display:none;align-items:center;justify-content:center;border-radius:var(--r-pill)}
+.topbar .back.show{display:flex}
+.topbar .brandlogo{height:30px;width:auto}
+.topbar h1{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--brand);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:110px}
+.screen.hidden{display:none}
+.pad{padding:16px}
+.btn{font-family:var(--font-body);font-weight:700;font-size:16px;border:0;cursor:pointer;border-radius:var(--r-pill);height:52px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background var(--dur) var(--ease),transform 120ms var(--ease),box-shadow var(--dur) var(--ease);width:100%}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--brand);color:var(--text-inverse);box-shadow:var(--sh-warm-sm)}
+.btn-primary:hover{background:var(--brand-hover);box-shadow:var(--sh-warm-md)}
+.btn-gold{background:var(--accent);color:var(--brand)}
+.btn-gold:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg-card);color:var(--brand);border:1px solid var(--border-strong)}
+.btn-secondary:hover{background:var(--bg-soft)}
+.btn-danger{background:var(--danger);color:var(--text-inverse)}
+.btn-danger:hover{background:var(--danger-hover)}
+.btn-sm{height:42px;font-size:14px;padding:0 16px;width:auto}
+.btn-ghost{background:none;color:var(--text-secondary);width:auto;height:auto;padding:8px}
+.card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--r-xl);padding:16px;box-shadow:var(--sh-sm)}
+.cat-card{display:flex;gap:14px;align-items:center;margin-bottom:14px;cursor:pointer;transition:box-shadow var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.cat-card:active{transform:scale(.99)}
+.cat-card.lost{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger),var(--sh-sm)}
+.cat-avatar{width:66px;height:66px;border-radius:50%;object-fit:cover;background:var(--bg-soft);flex-shrink:0;border:2px solid var(--border-soft)}
+.cat-card .meta{flex:1;min-width:0}
+.cat-card .meta .nm{font-family:var(--font-display);font-weight:600;font-size:20px;color:var(--brand);line-height:1.1}
+.cat-card .meta .sub{font-size:14px;color:var(--text-secondary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{color:var(--text-muted);font-size:20px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);letter-spacing:.01em}
+.badge-safe{background:var(--status-safe-bg);color:var(--status-safe-text)}
+.badge-lost{background:var(--danger-soft);color:var(--danger-text)}
+.empty{text-align:center;padding:40px 24px;color:var(--text-secondary)}
+.empty img{width:150px;height:auto;margin:0 auto 8px;display:block}
+.empty h2{font-family:var(--font-display);font-weight:600;color:var(--brand);font-size:24px;margin-bottom:6px}
+.empty p{font-size:15px;line-height:1.5;max-width:290px;margin:0 auto 20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;letter-spacing:.01em}
+.field .req{color:var(--danger)}
+.input,.textarea,.select{width:100%;font-family:var(--font-body);font-size:16px;color:var(--text-primary);background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--r-lg);padding:0 16px;height:48px;transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.textarea{height:auto;padding:12px 16px;resize:vertical;min-height:78px;line-height:1.5}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px rgba(31,77,52,.12)}
+.input.err,.textarea.err{border-color:var(--danger);box-shadow:0 0 0 4px rgba(224,122,63,.14)}
+.hint{font-size:12px;color:var(--text-muted);margin-top:5px;line-height:1.4}
+.section-label{font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--brand);margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:"";width:4px;height:16px;background:var(--accent);border-radius:2px}
+.priv-tag{font-size:11px;font-weight:700;color:var(--color-gold-700);background:#FBF1D8;padding:2px 8px;border-radius:var(--r-pill);margin-left:6px}
+.pub-tag{font-size:11px;font-weight:700;color:var(--status-safe-text);background:var(--status-safe-bg);padding:2px 8px;border-radius:var(--r-pill);margin-left:6px}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+.photo-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.photo-thumb{width:78px;height:78px;border-radius:var(--r-lg);object-fit:cover;border:1px solid var(--border-soft)}
+.photo-add{width:78px;height:78px;border-radius:var(--r-lg);border:2px dashed var(--border-strong);background:var(--bg-soft);color:var(--text-muted);font-size:28px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.photo-wrap{position:relative}
+.photo-del{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;border:2px solid var(--bg-card);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+.photo-main{position:absolute;bottom:4px;left:4px;font-size:10px;font-weight:700;background:var(--accent);color:var(--brand);padding:2px 6px;border-radius:var(--r-pill)}
+.hero-photo{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--r-2xl);background:var(--bg-soft);box-shadow:var(--sh-md)}
+.detail-name{font-family:var(--font-display);font-weight:700;font-size:32px;color:var(--brand);line-height:1;margin:16px 0 8px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.info-cell{background:var(--bg-soft);border-radius:var(--r-md);padding:10px 12px}
+.info-cell .k{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+.info-cell .v{font-size:15px;color:var(--text-primary);margin-top:2px;font-weight:600}
+.info-cell.full{grid-column:1/-1}
+.qr-block{background:var(--bg-card);border:2px solid var(--accent);border-radius:var(--r-xl);padding:20px;text-align:center;margin-top:8px}
+.qr-canvas{display:inline-flex;padding:14px;background:#fff;border-radius:var(--r-md);box-shadow:var(--sh-sm)}
+.qr-canvas img,.qr-canvas canvas{display:block;border-radius:4px}
+.qr-url{font-size:12px;color:var(--text-muted);margin-top:10px;word-break:break-all}
+.finder-band{background:var(--brand);color:var(--text-inverse);text-align:center;padding:22px 16px}
+.finder-band.lost{background:var(--danger)}
+.finder-band .k{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.finder-band .h{font-family:var(--font-display);font-weight:700;font-size:30px;margin-top:4px}
+.finder-band .reward{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);padding:6px 14px;border-radius:var(--r-pill);font-weight:700;font-size:15px}
+.contact-btn{display:flex;align-items:center;gap:12px;width:100%;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:10px;cursor:pointer;text-decoration:none;color:var(--text-primary);transition:background var(--dur) var(--ease)}
+.contact-btn:hover{background:var(--bg-soft)}
+.contact-btn .ic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.contact-btn .lbl{flex:1;min-width:0}
+.contact-btn .lbl .t{font-weight:700;font-size:15px;color:var(--brand)}
+.contact-btn .lbl .s{font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fab{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:150;max-width:398px;width:calc(100% - 32px)}
+.action-stack{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg-soft);border-radius:var(--r-lg);padding:12px 14px}
+.toggle-row .lbl{font-size:14px;font-weight:600;color:var(--text-primary)}
+.switch{position:relative;width:48px;height:28px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:var(--border-strong);border-radius:var(--r-pill);transition:var(--dur);cursor:pointer}
+.slider::before{content:"";position:absolute;height:22px;width:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:var(--dur)}
+.switch input:checked+.slider{background:var(--danger)}
+.switch input:checked+.slider::before{transform:translateX(20px)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--color-forest-800);color:var(--text-inverse);padding:12px 20px;border-radius:var(--r-pill);font-size:14px;font-weight:600;opacity:0;transition:all 260ms var(--ease-soft);z-index:900;pointer-events:none;box-shadow:var(--sh-md);max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.screen:not(.hidden){animation:fadein 260ms var(--ease-soft)}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.lost-banner{background:var(--danger-soft);border:1px solid var(--danger);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lost-banner .t{font-weight:700;color:var(--danger-text);font-size:14px}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,47,32,.5);z-index:600;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex;animation:fadein 200ms var(--ease-soft)}
+.modal{background:var(--bg-card);width:100%;max-width:430px;border-radius:var(--r-2xl) var(--r-2xl) 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;animation:slideup 300ms var(--ease-soft)}
+@keyframes slideup{from{transform:translateY(30px)}to{transform:translateY(0)}}
+.modal h3{font-family:var(--font-display);font-weight:600;color:var(--brand);font-size:22px;margin-bottom:14px}
+.poster{background:var(--bg-card);border:2px solid var(--danger);border-radius:var(--r-lg);padding:18px;text-align:center}
+.poster .tag{background:var(--danger);color:#fff;font-family:var(--font-display);font-weight:700;font-size:22px;padding:6px 0;border-radius:var(--r-sm);letter-spacing:.04em}
+.poster img.pp{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:var(--r-md);margin:12px 0}
+.poster .pname{font-family:var(--font-display);font-weight:700;font-size:26px;color:var(--brand)}
+.timeline{font-size:12px;color:var(--text-muted);margin-top:10px}
+@media print{
+  body{background:#fff}.topbar,.fab,.action-stack,.no-print,.modal-overlay{display:none!important}
+  #app{max-width:none}.screen{padding:0}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <button class="back" id="backBtn" onclick="goBack()">‹</button>
+    <img class="brandlogo" id="brandLogo" alt="MewMate"/>
+    <h1 id="title" style="display:none">MewMate</h1>
+    <span class="spacer"></span>
+  </div>
+  <div class="screen" id="screen-list"><div class="pad" id="listBody"></div>
+    <button class="btn btn-primary fab" onclick="openForm()">＋ Add a cat</button></div>
+  <div class="screen hidden" id="screen-form"><div class="pad" id="formBody"></div></div>
+  <div class="screen hidden" id="screen-detail"><div class="pad" id="detailBody"></div></div>
+  <div class="screen hidden" id="screen-lost"><div class="pad" id="lostBody"></div></div>
+  <div class="screen hidden" id="screen-finder"><div id="finderBody"></div></div>
+</div>
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+<script>const LOGO_PRIMARY="data:image/png;base64,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";
+const LOGO_ICON="data:image/png;base64,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";</script>
+<script>
+/* ================= Storage ================= */
+const KEY='mewmate.cats.v2';
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}};
+const save=c=>{try{localStorage.setItem(KEY,JSON.stringify(c))}catch(e){toast('Storage full — remove a photo')}};
+let cats=load();
+let stack=['list'];
+
+const genId=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=a[Math.floor(Math.random()*a.length)];return s;};
+const finderURL=id=>`https://mewmate.app/c/${id}`;
+
+/* ================= Nav ================= */
+const screens=['list','form','detail','lost','finder'];
+function show(name,push=true){
+  screens.forEach(s=>document.getElementById('screen-'+s).classList.toggle('hidden',s!==name));
+  if(push)stack.push(name);
+  document.getElementById('backBtn').classList.toggle('show',stack.length>1);
+  document.getElementById('screen-'+name).scrollTop=0;
+}
+function goBack(){if(stack.length>1){stack.pop();rerender(stack[stack.length-1]);}}
+function rerender(name){
+  // re-render the screen we're returning to so data is fresh
+  if(name==='list')renderList();
+  else if(name==='detail'&&currentId)openDetail(currentId,false);
+  else if(name==='lost'&&currentId)openLost(currentId,false);
+  else if(name==='finder'&&currentId)openFinder(currentId,false);
+  show(name,false);
+}
+function setLogo(mode){
+  // mode 'wordmark' shows primary logo, 'title' shows text title
+  document.getElementById('brandLogo').style.display=mode==='wordmark'?'block':'none';
+  document.getElementById('title').style.display=mode==='wordmark'?'none':'block';
+}
+function setTitle(t){document.getElementById('title').textContent=t;setLogo('title');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300);}
+function openModal(html){document.getElementById('modalBox').innerHTML=html;document.getElementById('modalOverlay').classList.add('show');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+
+/* ================= Helpers ================= */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const placeholder='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="#F2E3C6"/><text x="60" y="74" font-size="52" text-anchor="middle">🐱</text></svg>');
+const catImg=c=>(c.photos&&c.photos[0])||placeholder;
+function normEG(p){let n=String(p||'').replace(/[^\d]/g,'');if(!n)return'';if(n.startsWith('00'))n=n.slice(2);if(n.startsWith('20'))return n;if(n.startsWith('0'))return '20'+n.slice(1);if(n.length===10)return '20'+n;return n;}
+const waLink=p=>'https://wa.me/'+normEG(p);
+const telLink=p=>'tel:+'+normEG(p);
+function timeAgo(ts){if(!ts)return'';const s=Math.floor((Date.now()-ts)/1000);if(s<60)return'just now';const m=Math.floor(s/60);if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';const d=Math.floor(h/24);return d+'d ago';}
+function fmtDate(ts){if(!ts)return'';return new Date(ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
+
+/* ================= LIST ================= */
+function renderList(){
+  setLogo('wordmark');
+  const body=document.getElementById('listBody');
+  const lost=cats.filter(c=>c.isLost);
+  if(!cats.length){
+    body.innerHTML=`<div class="empty">
+      <img src="${LOGO_PRIMARY}" alt="MewMate"/>
+      <h2>No cats yet</h2>
+      <p>Add your cat and get a QR safety tag. If they ever get lost, whoever finds them can reach you in one tap.</p>
+    </div>`;return;
+  }
+  let html='';
+  if(lost.length)html+=`<div class="lost-banner"><span style="font-size:20px">🚨</span><div class="t">${lost.length} cat${lost.length>1?'s':''} in Lost Mode</div></div>`;
+  html+=`<div style="font-size:13px;color:var(--text-secondary);margin:0 0 14px;font-weight:600">${cats.length} ${cats.length===1?'cat':'cats'} protected</div>`;
+  html+=cats.map(c=>`
+    <div class="card cat-card ${c.isLost?'lost':''}" onclick="openDetail('${c.id}')">
+      <img class="cat-avatar" src="${catImg(c)}" alt="${esc(c.name)}"/>
+      <div class="meta">
+        <div class="nm">${esc(c.name)||'Unnamed'}</div>
+        <div class="sub">${esc([c.breed,c.color,c.city].filter(Boolean).join(' · '))||'Tap to add details'}</div>
+        <div style="margin-top:6px">${c.isLost?'<span class="badge badge-lost">● Lost mode</span>':'<span class="badge badge-safe">● Safe</span>'}</div>
+      </div><span class="chev">›</span>
+    </div>`).join('');
+  body.innerHTML=html;
+}
+
+/* ================= FORM ================= */
+let formPhotos=[];let editingId=null;
+function openForm(id){
+  editingId=id||null;
+  const c=id?cats.find(x=>x.id===id):{};
+  formPhotos=(c.photos||[]).slice();
+  setTitle(id?'Edit profile':'New cat');
+  show('form');
+  document.getElementById('formBody').innerHTML=`
+    <div class="section-label">Photos</div>
+    <div class="photo-row" id="photoRow"></div>
+    <div class="hint">Up to 4. First photo shows on the finder page, tag & poster. Tap a photo to make it the main one.</div>
+
+    <div class="section-label">The basics <span class="pub-tag">public</span></div>
+    <div class="field"><label>Name <span class="req">*</span></label><input class="input" id="f_name" value="${esc(c.name)}" placeholder="e.g. Simba"/></div>
+    <div class="row2"><div class="field"><label>Breed</label><input class="input" id="f_breed" value="${esc(c.breed)}" placeholder="Baladi / DSH"/></div>
+    <div class="field"><label>Age</label><input class="input" id="f_age" value="${esc(c.age)}" placeholder="2 yrs"/></div></div>
+    <div class="field"><label>Color / markings</label><input class="input" id="f_color" value="${esc(c.color)}" placeholder="Ginger with white chest"/></div>
+    <div class="field"><label>City</label><input class="input" id="f_city" value="${esc(c.city)}" placeholder="Cairo"/></div>
+    <div class="field"><label>Personality / behavior <span class="pub-tag">public</span></label><textarea class="textarea" id="f_personality" placeholder="Shy with strangers, may hide. Answers to name.">${esc(c.personality)}</textarea></div>
+
+    <div class="section-label">How a finder reaches you <span class="pub-tag">public</span></div>
+    <div class="field"><label>WhatsApp number <span class="req">*</span></label><input class="input" id="f_wa" type="tel" inputmode="tel" value="${esc(c.ownerWhatsApp)}" placeholder="01xxxxxxxxx"/><div class="hint">Egyptian numbers auto-format for WhatsApp (+20).</div></div>
+    <div class="field"><label>Phone (call)</label><input class="input" id="f_phone" type="tel" inputmode="tel" value="${esc(c.ownerPhone)}" placeholder="01xxxxxxxxx"/></div>
+
+    <div class="section-label">Emergency & vet <span class="pub-tag">public</span></div>
+    <div class="field"><label>Emergency contact name</label><input class="input" id="f_emName" value="${esc(c.emergencyName)}" placeholder="e.g. Sara (sister)"/></div>
+    <div class="field"><label>Emergency contact number</label><input class="input" id="f_emPhone" type="tel" inputmode="tel" value="${esc(c.emergencyPhone)}" placeholder="01xxxxxxxxx"/></div>
+    <div class="field"><label>Vet clinic / number</label><input class="input" id="f_vet" value="${esc(c.vetContact)}" placeholder="e.g. Maadi Vet — 01xxxxxxxxx"/></div>
+
+    <div class="section-label">Private details <span class="priv-tag">owner only</span></div>
+    <div class="field"><label>Neighborhood</label><input class="input" id="f_hood" value="${esc(c.neighborhood)}" placeholder="Maadi"/></div>
+    <div class="field"><label>Home address</label><input class="input" id="f_home" value="${esc(c.homeAddress)}" placeholder="Never shown to finders"/><div class="hint">🔒 Hidden from the public finder page.</div></div>
+    <div class="field"><label>Medical notes</label><textarea class="textarea" id="f_medical" placeholder="Allergies, medication, chronic conditions...">${esc(c.medicalNotes)}</textarea><div class="hint">🔒 Private by default.</div></div>
+
+    <div class="action-stack">
+      <button class="btn btn-primary" onclick="saveForm()">${id?'Save changes':'Create profile & QR'}</button>
+      ${id?`<button class="btn btn-ghost" style="width:100%;color:var(--danger)" onclick="deleteCat('${id}')">Delete this cat</button>`:''}
+    </div>`;
+  renderPhotoRow();
+}
+function renderPhotoRow(){
+  const row=document.getElementById('photoRow');
+  row.innerHTML=formPhotos.map((p,i)=>`<div class="photo-wrap">
+    <img class="photo-thumb" src="${p}" onclick="makeMain(${i})"/>
+    ${i===0?'<span class="photo-main">Main</span>':''}
+    <div class="photo-del" onclick="delPhoto(${i})">✕</div></div>`).join('')+
+    (formPhotos.length<4?`<label class="photo-add">＋<input type="file" accept="image/*" style="display:none" onchange="addPhoto(event)"/></label>`:'');
+}
+function makeMain(i){if(i===0)return;const[p]=formPhotos.splice(i,1);formPhotos.unshift(p);renderPhotoRow();}
+function addPhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const rd=new FileReader();
+  rd.onload=()=>{const img=new Image();img.onload=()=>{
+    const max=800,sc=Math.min(1,max/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas');cv.width=Math.round(img.width*sc);cv.height=Math.round(img.height*sc);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    formPhotos.push(cv.toDataURL('image/jpeg',0.82));renderPhotoRow();
+  };img.src=rd.result;};rd.readAsDataURL(file);e.target.value='';
+}
+function delPhoto(i){formPhotos.splice(i,1);renderPhotoRow();}
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function mark(id,bad){const el=document.getElementById(id);if(el)el.classList.toggle('err',bad);}
+function saveForm(){
+  const name=val('f_name'),wa=val('f_wa');
+  mark('f_name',!name);mark('f_wa',!wa);
+  if(!name){toast('Name is required');document.getElementById('f_name').focus();return;}
+  if(!wa){toast('WhatsApp number is required');document.getElementById('f_wa').focus();return;}
+  const data={name,breed:val('f_breed'),color:val('f_color'),age:val('f_age'),city:val('f_city'),
+    personality:val('f_personality'),ownerWhatsApp:wa,ownerPhone:val('f_phone'),
+    emergencyName:val('f_emName'),emergencyPhone:val('f_emPhone'),vetContact:val('f_vet'),
+    neighborhood:val('f_hood'),homeAddress:val('f_home'),medicalNotes:val('f_medical'),photos:formPhotos.slice()};
+  if(editingId){const c=cats.find(x=>x.id===editingId);Object.assign(c,data);c.updatedAt=Date.now();save(cats);toast('Profile updated');openDetail(editingId);}
+  else{const c={id:genId(),isLost:false,createdAt:Date.now(),updatedAt:Date.now(),...data,lost:null};cats.unshift(c);save(cats);toast('Profile & QR created');stack=['list','detail'];openDetail(c.id,false);}
+}
+function deleteCat(id){
+  openModal(`<h3>Delete this cat?</h3><p style="color:var(--text-secondary);font-size:15px;line-height:1.5;margin-bottom:18px">The QR tag will stop working and all data is removed. This can't be undone.</p>
+    <button class="btn btn-danger" onclick="confirmDelete('${id}')">Delete permanently</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeModal()">Cancel</button>`);
+}
+function confirmDelete(id){cats=cats.filter(x=>x.id!==id);save(cats);closeModal();toast('Profile deleted');stack=['list'];renderList();show('list',false);}
+
+/* ================= DETAIL ================= */
+let currentId=null;
+function openDetail(id,push=true){
+  const c=cats.find(x=>x.id===id);if(!c)return;currentId=id;
+  setTitle(c.name);show('detail',push);
+  document.getElementById('detailBody').innerHTML=`
+    ${c.isLost?`<div class="lost-banner"><span style="font-size:20px">🚨</span><div><div class="t">Lost mode is ON${c.lost&&c.lost.since?' · '+timeAgo(c.lost.since):''}</div><div style="font-size:12px;color:var(--danger-text)">Finder page shows an urgent alert.</div></div></div>`:''}
+    <img class="hero-photo" src="${catImg(c)}"/>
+    <div class="detail-name">${esc(c.name)}</div>
+    <div>${c.isLost?'<span class="badge badge-lost">● Lost mode</span>':'<span class="badge badge-safe">● Safe at home</span>'}</div>
+    <div class="info-grid">
+      ${c.breed?infoCell('Breed',c.breed):''}${c.color?infoCell('Color',c.color):''}
+      ${c.age?infoCell('Age',c.age):''}${c.city?infoCell('City',c.city):''}
+      ${c.personality?infoCell('Personality',c.personality,true):''}
+      ${c.vetContact?infoCell('Vet',c.vetContact,true):''}
+    </div>
+
+    <div class="section-label" style="margin-top:24px">QR safety tag</div>
+    <div class="qr-block">
+      <div class="qr-canvas" id="qrHolder"></div>
+      <div class="qr-url">${finderURL(c.id)}</div>
+      <div class="hint" style="margin-top:8px">Print once. Edit the profile anytime — the tag keeps working.</div>
+      <div class="row2" style="margin-top:14px">
+        <button class="btn btn-gold btn-sm" style="width:100%" onclick="downloadQR('${c.id}')">Download PNG</button>
+        <button class="btn btn-secondary btn-sm" style="width:100%" onclick="openFinder('${c.id}')">Preview finder</button>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:24px">Lost mode</div>
+    ${c.isLost?`<button class="btn btn-danger" onclick="openLost('${c.id}')">Manage Lost Mode</button>
+      <button class="btn btn-secondary" style="margin-top:10px" onclick="markFound('${c.id}')">✓ Mark as found (turn off)</button>`
+      :`<button class="btn btn-danger" onclick="startLost('${c.id}')">🚨 Report ${esc(c.name)} as lost</button>`}
+    <div class="hint">Turns the finder page into an urgent missing-cat alert with reward and last-seen location.</div>
+
+    <div class="action-stack"><button class="btn btn-primary" onclick="openForm('${c.id}')">Edit profile</button></div>`;
+  const holder=document.getElementById('qrHolder');holder.innerHTML='';
+  new QRCode(holder,{text:finderURL(c.id),width:180,height:180,colorDark:'#1F4D34',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+}
+function infoCell(k,v,full){return `<div class="info-cell ${full?'full':''}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`;}
+function downloadQR(id){
+  const holder=document.getElementById('qrHolder');const el=holder.querySelector('canvas')||holder.querySelector('img');
+  let url=el.tagName==='CANVAS'?el.toDataURL('image/png'):el.src;
+  const a=document.createElement('a');a.href=url;a.download='mewmate-qr-'+id+'.png';a.click();toast('QR downloaded');
+}
+
+/* ================= LOST MODE ================= */
+function startLost(id){
+  const c=cats.find(x=>x.id===id);if(!c)return;
+  c.isLost=true;c.lost={since:Date.now(),reward:'',lastSeen:'',lastSeenAt:Date.now(),extraNote:''};c.updatedAt=Date.now();save(cats);
+  toast('🚨 Lost Mode ON');openLost(id);
+}
+function openLost(id,push=true){
+  const c=cats.find(x=>x.id===id);if(!c||!c.lost)return;currentId=id;
+  setTitle('Lost Mode');show('lost',push);
+  const L=c.lost;
+  document.getElementById('lostBody').innerHTML=`
+    <div class="lost-banner"><span style="font-size:22px">🚨</span><div><div class="t">${esc(c.name)} is in Lost Mode</div><div style="font-size:12px;color:var(--danger-text)">Active since ${fmtDate(L.since)} · ${timeAgo(L.since)}</div></div></div>
+    <img class="hero-photo" src="${catImg(c)}"/>
+    <div class="section-label" style="margin-top:20px">Missing details</div>
+    <div class="field"><label>Last seen — location</label><input class="input" id="l_lastSeen" value="${esc(L.lastSeen)}" placeholder="e.g. Near Road 9, Maadi"/></div>
+    <div class="field"><label>Last seen — when</label><input class="input" id="l_lastSeenWhen" value="${esc(L.lastSeenWhen||'')}" placeholder="e.g. Today ~6pm"/></div>
+    <div class="field"><label>Reward (optional)</label><input class="input" id="l_reward" value="${esc(L.reward)}" placeholder="e.g. 1000 EGP"/></div>
+    <div class="field"><label>Extra note for finders</label><textarea class="textarea" id="l_note" placeholder="e.g. Do not chase — she gets scared. Call and wait.">${esc(L.extraNote)}</textarea></div>
+    <button class="btn btn-primary" onclick="saveLost('${id}')">Save lost details</button>
+
+    <div class="section-label" style="margin-top:24px">Share & recover</div>
+    <button class="btn btn-danger" onclick="openPoster('${id}')">🖼️ Generate lost poster</button>
+    <button class="btn btn-secondary" style="margin-top:10px" onclick="shareLost('${id}')">📣 Share alert (WhatsApp / groups)</button>
+    <button class="btn btn-secondary" style="margin-top:10px" onclick="openFinder('${id}')">👁️ Preview finder page</button>
+
+    <div class="action-stack"><button class="btn btn-secondary" style="border-color:var(--success);color:var(--success)" onclick="markFound('${id}')">✓ Mark as found — turn off Lost Mode</button></div>`;
+}
+function saveLost(id){
+  const c=cats.find(x=>x.id===id);
+  c.lost.lastSeen=val('l_lastSeen');c.lost.lastSeenWhen=val('l_lastSeenWhen');
+  c.lost.reward=val('l_reward');c.lost.extraNote=val('l_note');c.lost.lastSeenAt=Date.now();c.updatedAt=Date.now();
+  save(cats);toast('Lost details saved');
+}
+function markFound(id){
+  openModal(`<h3>Mark as found? 🎉</h3><p style="color:var(--text-secondary);font-size:15px;line-height:1.5;margin-bottom:18px">Lost Mode turns off and the finder page returns to normal. The profile & QR stay.</p>
+    <button class="btn btn-primary" onclick="confirmFound('${id}')">Yes, ${esc(cats.find(x=>x.id===id).name)} is home</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeModal()">Cancel</button>`);
+}
+function confirmFound(id){const c=cats.find(x=>x.id===id);c.isLost=false;c.updatedAt=Date.now();save(cats);closeModal();toast('🎉 Welcome home!');stack=['list','detail'];openDetail(id,false);}
+function shareLost(id){
+  const c=cats.find(x=>x.id===id);const L=c.lost||{};
+  const txt=`🚨 LOST CAT — ${c.name}\n${[c.breed,c.color].filter(Boolean).join(', ')}${c.city?' · '+c.city:''}\n${L.lastSeen?'Last seen: '+L.lastSeen+(L.lastSeenWhen?' ('+L.lastSeenWhen+')':''):''}\n${L.reward?'Reward: '+L.reward:''}\nContact / details: ${finderURL(c.id)}`.replace(/\n{2,}/g,'\n');
+  if(navigator.share){navigator.share({title:'Lost cat: '+c.name,text:txt}).catch(()=>{});}
+  else{window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');}
+}
+function openPoster(id){
+  const c=cats.find(x=>x.id===id);const L=c.lost||{};
+  openModal(`<h3>Lost poster</h3>
+    <div class="poster" id="posterEl">
+      <div class="tag">MISSING CAT</div>
+      <img class="pp" src="${catImg(c)}"/>
+      <div class="pname">${esc(c.name)}</div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-top:2px">${esc([c.breed,c.color].filter(Boolean).join(' · '))}</div>
+      ${L.lastSeen?`<div style="margin-top:10px;font-size:14px"><b>Last seen:</b> ${esc(L.lastSeen)}${L.lastSeenWhen?' ('+esc(L.lastSeenWhen)+')':''}</div>`:''}
+      ${L.reward?`<div style="margin-top:6px;font-weight:700;color:var(--danger-text)">Reward: ${esc(L.reward)}</div>`:''}
+      ${L.extraNote?`<div style="margin-top:8px;font-size:13px;color:var(--text-secondary)">${esc(L.extraNote)}</div>`:''}
+      <div style="margin-top:12px;font-size:14px;font-weight:700;color:var(--brand)">📱 Scan the QR or contact:</div>
+      <div style="font-size:15px;font-weight:700;color:var(--brand)">${esc(normEG(c.ownerWhatsApp)?'+'+normEG(c.ownerWhatsApp):'')}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px">${finderURL(c.id)}</div>
+    </div>
+    <button class="btn btn-danger" style="margin-top:16px" onclick="printPoster()">🖨️ Print / Save as PDF</button>
+    <button class="btn btn-secondary" style="margin-top:10px" onclick="shareLost('${id}')">Share text alert</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:6px" onclick="closeModal()">Close</button>`);
+}
+function printPoster(){
+  const html=document.getElementById('posterEl').outerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Lost Cat Poster</title><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet"><style>
+    body{font-family:'Nunito Sans',sans-serif;padding:32px;display:flex;justify-content:center}
+    .poster{max-width:420px;width:100%;border:3px solid #E07A3F;border-radius:16px;padding:24px;text-align:center}
+    .tag{background:#E07A3F;color:#fff;font-family:'Fredoka';font-weight:700;font-size:28px;padding:8px 0;border-radius:8px;letter-spacing:.05em}
+    .pp{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;margin:14px 0}
+    .pname{font-family:'Fredoka';font-weight:700;font-size:32px;color:#1F4D34}
+    </style></head><body>${html}</body></html>`);
+  w.document.close();setTimeout(()=>w.print(),400);
+}
+
+/* ================= FINDER (public) ================= */
+function openFinder(id,push=true){
+  const c=cats.find(x=>x.id===id);if(!c)return;currentId=id;
+  setTitle('Finder page');show('finder',push);
+  const L=c.lost||{};
+  document.getElementById('finderBody').innerHTML=`
+    <div class="finder-band ${c.isLost?'lost':''}">
+      <div class="k">${c.isLost?'🚨 This cat is missing':'This cat has a loving home'}</div>
+      <div class="h">${esc(c.name)}</div>
+      ${c.isLost&&L.reward?`<div class="reward">🎁 Reward: ${esc(L.reward)}</div>`:''}
+    </div>
+    <div class="pad">
+      <img class="hero-photo" src="${catImg(c)}"/>
+      ${c.isLost?`<div class="lost-banner" style="margin-top:16px"><span style="font-size:20px">📍</span><div class="t">Please help ${esc(c.name)} get home. Contact the owner now.</div></div>
+        ${L.lastSeen?`<div class="info-cell full" style="margin-top:10px"><div class="k">Last seen</div><div class="v">${esc(L.lastSeen)}${L.lastSeenWhen?' · '+esc(L.lastSeenWhen):''}</div></div>`:''}
+        ${L.extraNote?`<div class="info-cell full" style="margin-top:10px"><div class="k">Please note</div><div class="v" style="font-weight:500">${esc(L.extraNote)}</div></div>`:''}`:''}
+      <div class="info-grid" style="margin-top:16px">
+        ${c.breed?infoCell('Breed',c.breed):''}${c.color?infoCell('Color',c.color):''}
+        ${c.age?infoCell('Age',c.age):''}${c.city?infoCell('Area',c.city):''}
+        ${c.personality?infoCell('Good to know',c.personality,true):''}
+      </div>
+      <div class="section-label" style="margin-top:22px">Contact the owner</div>
+      <a class="contact-btn" href="${waLink(c.ownerWhatsApp)}" target="_blank">
+        <span class="ic" style="background:#25D36622;color:#128C4B">💬</span>
+        <span class="lbl"><div class="t">WhatsApp the owner</div><div class="s">Fastest way to reach them</div></span><span class="chev">›</span></a>
+      ${c.ownerPhone?`<a class="contact-btn" href="${telLink(c.ownerPhone)}"><span class="ic" style="background:var(--status-safe-bg);color:var(--brand)">📞</span><span class="lbl"><div class="t">Call the owner</div><div class="s">+${normEG(c.ownerPhone)}</div></span><span class="chev">›</span></a>`:''}
+      ${c.emergencyPhone?`<a class="contact-btn" href="${telLink(c.emergencyPhone)}"><span class="ic" style="background:var(--warning-soft);color:var(--warning-text)">🆘</span><span class="lbl"><div class="t">Emergency contact${c.emergencyName?' — '+esc(c.emergencyName):''}</div><div class="s">+${normEG(c.emergencyPhone)}</div></span><span class="chev">›</span></a>`:''}
+      ${c.vetContact?`<div class="contact-btn" style="cursor:default"><span class="ic" style="background:var(--bg-soft);color:var(--brand)">🏥</span><span class="lbl"><div class="t">Vet on file</div><div class="s">${esc(c.vetContact)}</div></span></div>`:''}
+      <div class="hint" style="text-align:center;margin-top:16px">🔒 The owner's home address and medical notes are kept private.</div>
+      <div class="action-stack no-print"><button class="btn btn-secondary" onclick="goBack()">‹ Back to owner view</button></div>
+    </div>`;
+}
+
+/* ================= Boot ================= */
+document.getElementById('brandLogo').src=LOGO_PRIMARY;
+if(!cats.length){
+  cats=[{id:genId(),name:'Simba',breed:'Baladi',color:'Ginger with white chest',age:'2 yrs',city:'Cairo',
+    neighborhood:'Maadi',personality:'Friendly but shy with strangers. Answers to his name.',
+    ownerWhatsApp:'01001234567',ownerPhone:'01001234567',emergencyName:'Sara',emergencyPhone:'01009876543',
+    vetContact:'Maadi Vet Clinic — 01234567890',homeAddress:'Street 9, Maadi',medicalNotes:'None known.',
+    isLost:false,lost:null,photos:[],createdAt:Date.now(),updatedAt:Date.now()}];
+  save(cats);
+}
+renderList();show('list',false);
+</script>
+</body>
+</html>
