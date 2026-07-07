@@ -11,14 +11,14 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title, showBack = false, onBack, showLogo = true }) => {
   return (
-    <header className="sticky top-0 z-[200] bg-[var(--color-bg-page)] relative flex min-h-[calc(128px+env(safe-area-inset-top))] items-center gap-2.5 px-3.5 pb-3 pt-[calc(16px+env(safe-area-inset-top))] border-b border-[var(--color-border-soft)]">
+    <header className="sticky top-0 z-[200] relative flex h-[calc(64px+env(safe-area-inset-top))] shrink-0 items-center gap-3 border-b border-[var(--color-border-soft)] bg-[var(--color-bg-page)] px-4 pb-2.5 pt-[calc(10px+env(safe-area-inset-top))]">
       {showBack && (
         <button
           onClick={onBack}
           aria-label="Go back"
-          className="w-8.5 h-8.5 flex items-center justify-center rounded-full text-[var(--color-brand-primary)] hover:bg-[var(--color-bg-soft)] transition-colors"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-bg-soft)]"
         >
-          <ChevronLeft size={26} />
+          <ChevronLeft size={22} />
         </button>
       )}
       {showLogo && (
@@ -28,11 +28,12 @@ export const Header: React.FC<HeaderProps> = ({ title, showBack = false, onBack,
           width={220}
           height={60}
           unoptimized
-          className="absolute left-1/2 top-1/2 h-24 w-auto -translate-x-1/2 -translate-y-1/2 bg-transparent"
+          style={{ width: 'auto' }}
+          className="absolute left-1/2 top-[calc(50%+env(safe-area-inset-top)/2)] h-12 w-auto -translate-x-1/2 -translate-y-1/2 bg-transparent"
         />
       )}
       {title && !showLogo && (
-        <h1 className="font-display font-bold text-xl text-[var(--color-brand-primary)] tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+        <h1 className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap font-display text-xl font-bold tracking-normal text-[var(--color-brand-primary)]">
           {title}
         </h1>
       )}

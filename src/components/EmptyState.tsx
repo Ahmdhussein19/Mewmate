@@ -21,6 +21,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon = '/logos/1.svg', t
             width={280}
             height={190}
             unoptimized
+            style={{ width: 'auto' }}
             className="h-[190px] w-auto bg-transparent"
           />
         ) : (

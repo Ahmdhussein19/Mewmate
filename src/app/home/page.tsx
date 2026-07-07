@@ -73,6 +73,7 @@ export default function Home() {
 
   const lostCats = cats.filter(c => c.isLost);
   const hasNoCatProfiles = isAuthenticated && !cats.length;
+  const hasCatProfiles = isAuthenticated && cats.length > 0;
 
   const handleAuth = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -113,6 +114,7 @@ export default function Home() {
       height={190}
       priority
       unoptimized
+      style={{ width: 'auto' }}
       className="h-[190px] w-auto -translate-y-8 bg-transparent transition-transform duration-300 ease-standard"
     />
   );
@@ -129,10 +131,10 @@ export default function Home() {
 
   return (
     <div className="w-full max-w-[430px] min-h-dvh mx-auto bg-[var(--color-bg-page)] relative flex flex-col overflow-hidden">
-      {isAuthenticated && <Header showLogo={!hasNoCatProfiles} />}
+      {hasCatProfiles && <Header />}
 
-      <div className={`flex-1 overflow-y-auto ${isAuthenticated ? 'pb-[calc(128px+env(safe-area-inset-bottom))]' : ''}`}>
-        <div className={`p-4 ${!isAuthenticated ? 'flex min-h-dvh flex-col justify-center' : ''}`}>
+      <div className={`flex-1 ${hasCatProfiles ? 'overflow-y-auto pb-[calc(128px+env(safe-area-inset-bottom))]' : 'overflow-hidden'}`}>
+        <div className={`p-4 ${!isAuthenticated ? 'flex min-h-dvh flex-col justify-center' : ''} ${hasNoCatProfiles ? 'flex min-h-full flex-col justify-center pb-[calc(96px+env(safe-area-inset-bottom))]' : ''}`}>
           {!isAuthenticated ? (
             <div className="flex w-full flex-col items-center justify-center gap-4">
               {authLogo}

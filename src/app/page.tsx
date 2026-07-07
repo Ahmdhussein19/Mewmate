@@ -74,7 +74,7 @@ function ProductCard({ className = '' }: { className?: string }) {
   return (
     <div className={`rounded-[24px] border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] p-3 shadow-[var(--shadow-md)] ${className}`}>
       <div className="rounded-t-[18px] bg-[var(--color-brand-primary)] px-4 pb-5 pt-4 text-center text-[var(--color-text-inverse)]">
-        <Image src="/logos/1.svg" alt="" aria-hidden="true" width={64} height={42} unoptimized className="mx-auto h-10 w-auto bg-transparent" />
+        <Image src="/logos/1.svg" alt="" aria-hidden="true" width={64} height={42} unoptimized style={{ width: 'auto' }} className="mx-auto h-10 w-auto bg-transparent" />
         <div className="font-display text-xl font-bold">MewMate</div>
       </div>
       <QrPattern className="mx-auto h-20 w-20 rounded-lg bg-[var(--color-bg-elevated)] p-2" />
@@ -89,7 +89,7 @@ function PhonePreview({ className = '' }: { className?: string }) {
   return (
     <div className={`rounded-[30px] border-[7px] border-[#1f1f1f] bg-[var(--color-bg-card)] p-3 shadow-[var(--shadow-lg)] ${className}`}>
       <div className="mx-auto mb-3 h-2.5 w-14 rounded-full bg-[#1f1f1f]" />
-      <Image src="/logos/2.svg" alt="" aria-hidden="true" width={108} height={30} unoptimized className="mx-auto h-7 w-auto bg-transparent" />
+      <Image src="/logos/2.svg" alt="" aria-hidden="true" width={108} height={30} unoptimized style={{ width: 'auto' }} className="mx-auto h-7 w-auto bg-transparent" />
       <div className="mt-5 text-center font-display text-xl font-black text-[var(--color-brand-primary)]">
         Luna <span className="text-[var(--color-terracotta)]">♥</span>
       </div>
@@ -200,7 +200,7 @@ export default function LandingPage() {
       <section className="relative mx-auto max-w-[1180px] overflow-hidden rounded-[28px] bg-[linear-gradient(115deg,#fffdf7_0%,#fff9ef_56%,#f8dfc8_100%)]">
         <header className="relative z-30 flex h-[72px] items-center justify-between px-[clamp(20px,4vw,48px)] sm:h-20">
           <Link href="/" aria-label="MewMate home" className="inline-flex items-center">
-            <Image src="/logos/1.svg" alt="MewMate" width={220} height={60} priority unoptimized className="h-12 w-auto bg-transparent sm:h-14" />
+            <Image src="/logos/1.svg" alt="MewMate" width={220} height={60} priority unoptimized style={{ width: 'auto' }} className="h-12 w-auto bg-transparent sm:h-14" />
           </Link>
           <Button asChild size="lg" className="rounded-2xl">
             <Link href="/home">Sign in</Link>
@@ -312,7 +312,7 @@ export default function LandingPage() {
       <footer className="mx-auto flex max-w-[1180px] flex-col gap-5 rounded-[28px] bg-[var(--color-brand-primary)] px-[clamp(24px,4vw,48px)] py-7 text-[var(--color-text-inverse)] lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <span className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-[var(--color-cream)]">
-            <Image src="/logos/1.svg" alt="MewMate" width={48} height={52} unoptimized className="h-10 w-auto bg-transparent" />
+            <Image src="/logos/1.svg" alt="MewMate" width={48} height={52} unoptimized style={{ width: 'auto' }} className="h-10 w-auto bg-transparent" />
           </span>
           <div className="hidden h-10 w-px bg-[rgba(255,247,235,0.35)] sm:block" />
           <p className="max-w-[270px] text-sm leading-[1.45] text-[var(--color-cream)]">
