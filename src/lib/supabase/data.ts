@@ -458,6 +458,7 @@ export async function getFinderCat(tagCode: string) {
     emergencyName: row.emergency_name || undefined,
     emergencyPhone: row.emergency_phone || undefined,
     vetContact: row.vet_contact || undefined,
+    neighborhood: row.neighborhood || undefined,
     photos,
     photoPaths,
     isLost: row.is_lost,

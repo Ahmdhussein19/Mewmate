@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "MewMate — Cat Safety Tags",
   description: "Helping every pet find their way home with QR safety tags",
+  icons: {
+    icon: "/logos/2.svg",
+  },
 };
 
 export default function RootLayout({

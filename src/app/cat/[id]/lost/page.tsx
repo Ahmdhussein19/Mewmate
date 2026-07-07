@@ -6,7 +6,7 @@ import { Cat } from '@/types/cat';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
-import { Image as ImageIcon, Share2, Eye, CheckCircle } from 'lucide-react';
+import { Image as ImageIcon, Share2, Eye, CheckCircle, MapPin } from 'lucide-react';
 import { formatDate, getOwnedCat, markFound, placeholderPhoto, timeAgo, updateLostReport } from '@/lib/supabase/data';
 
 export default function LostMode() {
@@ -123,6 +123,22 @@ export default function LostMode() {
               </div>
             </div>
           </div>
+
+          {cat.neighborhood && (
+            <div className="mb-3.5 flex items-center gap-2.5 rounded-[var(--radius-lg)] border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] p-3 text-[var(--color-text-primary)] shadow-[var(--shadow-sm)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-bg-soft)] text-[var(--color-brand-primary)]">
+                <MapPin size={17} />
+              </div>
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.05em] text-[var(--color-text-muted)]">
+                  Owner neighborhood
+                </div>
+                <div className="text-sm font-medium text-[var(--color-text-primary)]">
+                  {cat.neighborhood}
+                </div>
+              </div>
+            </div>
+          )}
 
           <img
             src={photo}
