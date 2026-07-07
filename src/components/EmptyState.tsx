@@ -18,10 +18,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon = '/logos/1.svg', t
             src={icon}
             alt=""
             aria-hidden="true"
-            width={220}
-            height={150}
+            width={280}
+            height={190}
             unoptimized
-            className="h-[150px] w-auto bg-transparent"
+            className="h-[190px] w-auto bg-transparent"
           />
         ) : (
           <span className="text-[150px] leading-none">{icon}</span>

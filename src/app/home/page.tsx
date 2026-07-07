@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Cat } from '@/types/cat';
 import { Header } from '@/components/Header';
 import { CatCard } from '@/components/CatCard';
@@ -71,6 +72,7 @@ export default function Home() {
   };
 
   const lostCats = cats.filter(c => c.isLost);
+  const hasNoCatProfiles = isAuthenticated && !cats.length;
 
   const handleAuth = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -103,71 +105,112 @@ export default function Home() {
     setIsAuthenticated(false);
   };
 
+  const authLogo = (
+    <Image
+      src="/logos/1.svg"
+      alt="MewMate"
+      width={280}
+      height={190}
+      priority
+      unoptimized
+      className="h-[190px] w-auto -translate-y-8 bg-transparent transition-transform duration-300 ease-standard"
+    />
+  );
+
+  if (isLoading) {
+    return (
+      <main className="grid min-h-dvh w-full max-w-[430px] place-items-center bg-[var(--color-bg-page)] mx-auto">
+        <div aria-busy="true" aria-label="Loading home" role="status">
+          <span className="block h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border-soft)] border-t-[var(--color-brand-primary)]" />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <div className="w-full max-w-[430px] min-h-dvh mx-auto bg-[var(--color-bg-page)] relative flex flex-col overflow-hidden">
-      <Header showLogo />
+      {isAuthenticated && <Header showLogo={!hasNoCatProfiles} />}
 
       <div className={`flex-1 overflow-y-auto ${isAuthenticated ? 'pb-[calc(128px+env(safe-area-inset-bottom))]' : ''}`}>
-        <div className={`p-4 ${!isLoading && !isAuthenticated ? 'flex min-h-full items-center' : ''}`}>
-          {isLoading ? (
-            <p className="py-10 text-center text-sm text-[var(--color-text-secondary)]">Loading...</p>
-          ) : !isAuthenticated ? (
-            <div className="w-full rounded-[var(--radius-xl)] border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] p-4 shadow-[var(--shadow-sm)]">
-              <h1 className="text-center font-display text-2xl font-bold text-[var(--color-brand-primary)]">
-                {authMode === 'sign-in' ? 'Welcome back' : 'Create your account'}
-              </h1>
-              <p className="mx-auto mt-2 max-w-[320px] text-center text-sm leading-[1.5] text-[var(--color-text-secondary)]">
-                {authMode === 'sign-in'
-                  ? 'Access your cat profiles, QR tags, and recovery contacts.'
-                  : 'Set up a secure account to manage your cats and keep every QR tag connected.'}
-              </p>
-              <form className="mt-5" onSubmit={handleAuth}>
-                <Input
-                  label="Email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={event => setEmail(event.target.value)}
-                />
-                <Input
-                  label="Password"
-                  name="password"
-                  type="password"
-                  autoComplete={authMode === 'sign-in' ? 'current-password' : 'new-password'}
-                  required
-                  minLength={6}
-                  hint={authMode === 'sign-up' ? 'Use at least 6 characters.' : undefined}
-                  value={password}
-                  onChange={event => setPassword(event.target.value)}
-                />
-                {error && <p className="mb-3 text-sm font-semibold text-[var(--color-danger)]">{error}</p>}
-                <div className="flex flex-col gap-2.5">
-                  <Button fullWidth type="submit" disabled={isSubmitting}>
-                    {isSubmitting
-                      ? authMode === 'sign-in' ? 'Signing in...' : 'Creating account...'
-                      : authMode === 'sign-in' ? 'Sign in' : 'Create account'}
-                  </Button>
-                  <p className="text-center text-sm text-[var(--color-text-secondary)]">
-                    {authMode === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}{' '}
-                    <button
-                      type="button"
-                      className="font-bold text-[var(--color-brand-primary)] underline-offset-4 hover:underline"
-                      onClick={() => switchAuthMode(authMode === 'sign-in' ? 'sign-up' : 'sign-in')}
-                    >
-                      {authMode === 'sign-in' ? 'Create one' : 'Sign in'}
-                    </button>
-                  </p>
-                </div>
-              </form>
+        <div className={`p-4 ${!isAuthenticated ? 'flex min-h-dvh flex-col justify-center' : ''}`}>
+          {!isAuthenticated ? (
+            <div className="flex w-full flex-col items-center justify-center gap-4">
+              {authLogo}
+              <div className="w-full rounded-[var(--radius-xl)] border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] p-4 shadow-[var(--shadow-sm)]">
+                <h1 className="text-center font-display text-2xl font-bold text-[var(--color-brand-primary)]">
+                  {authMode === 'sign-in' ? 'Welcome back' : 'Create your account'}
+                </h1>
+                <p className="mx-auto mt-2 max-w-[320px] text-center text-sm leading-[1.5] text-[var(--color-text-secondary)]">
+                  {authMode === 'sign-in'
+                    ? 'Access your cat profiles, QR tags, and recovery contacts.'
+                    : 'Set up a secure account to manage your cats and keep every QR tag connected.'}
+                </p>
+                <form className="mt-5" onSubmit={handleAuth}>
+                  <Input
+                    label="Email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={event => setEmail(event.target.value)}
+                  />
+                  <Input
+                    label="Password"
+                    name="password"
+                    type="password"
+                    autoComplete={authMode === 'sign-in' ? 'current-password' : 'new-password'}
+                    required
+                    minLength={6}
+                    hint={authMode === 'sign-up' ? 'Use at least 6 characters.' : undefined}
+                    value={password}
+                    onChange={event => setPassword(event.target.value)}
+                  />
+                  {error && <p className="mb-3 text-sm font-semibold text-[var(--color-danger)]">{error}</p>}
+                  <div className="flex flex-col gap-2.5">
+                    <Button fullWidth type="submit" disabled={isSubmitting}>
+                      {isSubmitting
+                        ? authMode === 'sign-in' ? 'Signing in...' : 'Creating account...'
+                        : authMode === 'sign-in' ? 'Sign in' : 'Create account'}
+                    </Button>
+                    <p className="text-center text-sm text-[var(--color-text-secondary)]">
+                      {authMode === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}{' '}
+                      <button
+                        type="button"
+                        className="font-bold text-[var(--color-brand-primary)] underline-offset-4 hover:underline"
+                        onClick={() => switchAuthMode(authMode === 'sign-in' ? 'sign-up' : 'sign-in')}
+                      >
+                        {authMode === 'sign-in' ? 'Create one' : 'Sign in'}
+                      </button>
+                    </p>
+                  </div>
+                </form>
+              </div>
             </div>
-          ) : !cats.length ? (
-            <EmptyState
-              icon="/logos/1.svg"
-              title="No cats yet"
-              description="Add your cat and get a QR safety tag. If they ever get lost, whoever finds them can reach you in one tap."
-            />
+          ) : hasNoCatProfiles ? (
+            <>
+              <EmptyState
+                icon="/logos/1.svg"
+                title="No cats yet"
+                description="Add your cat and get a QR safety tag. If they ever get lost, whoever finds them can reach you in one tap."
+              />
+              <Button
+                fullWidth
+                variant="secondary"
+                className="hover:bg-[var(--color-success-soft)]"
+                onClick={() => router.push('/owner')}
+              >
+                Owner details
+              </Button>
+              <Button
+                fullWidth
+                variant="ghost"
+                className="mt-2 border border-[var(--color-border-strong)] bg-[var(--color-bg-card)] hover:bg-[var(--color-danger-soft)] hover:text-[#8F3E20]"
+                onClick={handleSignOut}
+              >
+                Sign out
+              </Button>
+            </>
           ) : (
             <>
               {lostCats.length > 0 && (
